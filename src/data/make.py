@@ -39,12 +39,14 @@ def process():
         X_to_predict[i, :, :] = img[:,:,-1]
     X_to_predict = X_to_predict.reshape(X_to_predict.shape[0], 28, 28, 1).astype('float32') / 255
 
-    np.save('../data/processed/X.npy', X)
-    np.save('../data/processed/y.npy', y)
-    np.save('../data/processed/X_to_predict.npy', X_to_predict)
+    np.savez('../data/interim/preprocessed.npz', X = X, y = y, X_to_predict = X_to_predict)
 
     return X, y, X_to_predict
 
-def split(X,y):
+def split():
+    with np.load('../data/interim/preprocessed.npz') as data:
+        X = data['X']
+        y = data['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify = y)
+    np.savez('../data/interim/splitted.npz', X_train = X_train, X_test = X_test, y_train = y_train, y_test = y_test)
     return X_train, X_test, y_train, y_test
